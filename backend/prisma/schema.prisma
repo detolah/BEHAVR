@@ -1,0 +1,106 @@
+// backend/prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  agent
+  lead
+  csm
+  manager
+}
+
+model Company {
+  id                String    @id @default(cuid())
+  name              String
+  industry          String
+  plan_tier         String    @default("free")
+  zendesk_subdomain String?
+  api_key           String    @unique
+  created_at        DateTime  @default(now())
+
+  users     User[]
+  customers Customer[]
+  profiles  Profile[]
+  signals   Signal[]
+}
+
+model User {
+  id         String   @id @default(cuid())
+  company_id String
+  email      String
+  password   String
+  name       String
+  role       Role     @default(agent)
+  created_at DateTime @default(now())
+
+  company Company @relation(fields: [company_id], references: [id])
+
+  @@unique([company_id, email])
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  company_id  String
+  email       String
+  external_id String?
+  name        String?
+  created_at  DateTime @default(now())
+
+  company  Company   @relation(fields: [company_id], references: [id])
+  profiles Profile[]
+  signals  Signal[]
+
+  @@unique([company_id, email])
+}
+
+model Profile {
+  id              String   @id @default(cuid())
+  customer_id     String
+  company_id      String
+  core_fields     Json?
+  industry_fields Json?
+  agent_note      String?
+  new_agent_brief String?
+  last_updated_by String?
+  updated_at      DateTime @updatedAt
+
+  customer Customer        @relation(fields: [customer_id], references: [id])
+  company  Company         @relation(fields: [company_id], references: [id])
+  history  ProfileHistory[]
+
+  @@unique([customer_id, company_id])
+}
+
+model ProfileHistory {
+  id         String   @id @default(cuid())
+  profile_id String
+  changed_by String
+  field_name String
+  old_value  String?
+  new_value  String?
+  changed_at DateTime @default(now())
+
+  profile Profile @relation(fields: [profile_id], references: [id])
+}
+
+model Signal {
+  id                  String    @id @default(cuid())
+  customer_id         String
+  company_id          String
+  contact_count       Int       @default(0)
+  escalation_count    Int       @default(0)
+  last_contact_at     DateTime?
+  avg_sentiment_score Float?
+  updated_at          DateTime  @updatedAt
+
+  customer Customer @relation(fields: [customer_id], references: [id])
+  company  Company  @relation(fields: [company_id], references: [id])
+
+  @@unique([customer_id, company_id])
+}
