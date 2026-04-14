@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 const prisma = require('../lib/prisma');
 
+if (!process.env.JWT_SECRET && process.env.NODE_ENV !== 'test') {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+const JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
+
 async function requireJwt(req, res, next) {
   const header = req.headers.authorization;
   if (!header || !header.startsWith('Bearer ')) {
@@ -8,7 +13,7 @@ async function requireJwt(req, res, next) {
   }
   const token = header.slice(7);
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET || 'test-secret');
+    const payload = jwt.verify(token, JWT_SECRET);
     req.user = { id: payload.userId, companyId: payload.companyId, role: payload.role };
     next();
   } catch {
@@ -22,7 +27,7 @@ async function requireApiKey(req, res, next) {
   const company = await prisma.company.findUnique({ where: { api_key: key } });
   if (!company) return res.status(401).json({ error: 'Invalid API key' });
   req.company = company;
-  req.user = { companyId: company.id, role: 'agent' };
+  req.user = { id: null, companyId: company.id, role: 'agent' };
   next();
 }
 

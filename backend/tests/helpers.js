@@ -6,10 +6,10 @@ const prisma = require('../src/lib/prisma');
 async function createTestCompany(overrides = {}) {
   return prisma.company.create({
     data: {
-      name: overrides.name || 'Test Co',
-      industry: overrides.industry || 'saas',
-      api_key: overrides.api_key || crypto.randomBytes(32).toString('hex'),
-      zendesk_subdomain: overrides.zendesk_subdomain || 'testco',
+      name: 'Test Co',
+      industry: 'saas',
+      api_key: crypto.randomBytes(32).toString('hex'),
+      zendesk_subdomain: 'testco',
       ...overrides,
     },
   });
