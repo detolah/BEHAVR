@@ -57,6 +57,7 @@ model Customer {
   signals  Signal[]
 
   @@unique([company_id, email])
+  @@index([company_id, external_id])
 }
 
 model Profile {
@@ -75,6 +76,7 @@ model Profile {
   history  ProfileHistory[]
 
   @@unique([customer_id, company_id])
+  @@index([company_id])
 }
 
 model ProfileHistory {
@@ -86,7 +88,9 @@ model ProfileHistory {
   new_value  String?
   changed_at DateTime @default(now())
 
-  profile Profile @relation(fields: [profile_id], references: [id])
+  profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  @@index([profile_id])
 }
 
 model Signal {
@@ -103,4 +107,5 @@ model Signal {
   company  Company  @relation(fields: [company_id], references: [id])
 
   @@unique([customer_id, company_id])
+  @@index([company_id])
 }
