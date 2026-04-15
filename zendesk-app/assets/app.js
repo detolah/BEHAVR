@@ -92,13 +92,14 @@
 
   async function api(method, path, body) {
     const opts = {
-      method,
-      headers: { 'x-api-key': API_KEY, 'Content-Type': 'application/json' },
+      url: `${API_BASE}${path}`,
+      type: method,
+      headers: { 'x-api-key': API_KEY },
+      contentType: 'application/json',
+      secure: true,
     };
-    if (body) opts.body = JSON.stringify(body);
-    const res = await fetch(`${API_BASE}${path}`, opts);
-    if (!res.ok) throw new Error(`${res.status}`);
-    return res.json();
+    if (body) opts.data = JSON.stringify(body);
+    return client.request(opts);
   }
 
   async function loadProfile(email) {

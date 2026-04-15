@@ -26,5 +26,8 @@
       "required": true
     }
   ],
-  "defaultLocale": "en"
+  "defaultLocale": "en",
+  "domainWhitelist": [
+    "behavr-production.up.railway.app"
+  ]
 }
