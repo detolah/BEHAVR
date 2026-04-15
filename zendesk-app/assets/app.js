@@ -2,7 +2,7 @@
   'use strict';
 
   const client = ZAFClient.init();
-  let API_BASE, API_KEY, currentCustomerId;
+  let API_BASE, currentCustomerId;
 
   client.invoke('resize', { width: '100%', height: '600px' });
 
@@ -94,7 +94,7 @@
     const opts = {
       url: `${API_BASE}${path}`,
       type: method,
-      headers: { 'x-api-key': API_KEY },
+      headers: { 'x-api-key': '{{setting.api_key}}' },
       contentType: 'application/json',
       secure: true,
     };
@@ -126,10 +126,10 @@
   async function init() {
     try {
       const meta = await client.metadata();
-      API_KEY  = meta.settings.api_key;
-      API_BASE = meta.settings.api_base_url.replace(/\/$/, '');
+      API_BASE = (meta.settings.api_base_url || '').replace(/\/$/, '');
+      if (!API_BASE) throw new Error('missing api_base_url');
     } catch {
-      showError('Widget config missing. Set api_key and api_base_url in app settings.');
+      showError('Widget config missing. Set api_base_url in app settings.');
       return;
     }
 
