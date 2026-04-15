@@ -7,6 +7,7 @@ import RoleGate from '../components/RoleGate.jsx';
 import FieldEditor from '../components/FieldEditor.jsx';
 import IndustryFields from '../components/IndustryFields.jsx';
 import SignalBadge from '../components/SignalBadge.jsx';
+import BulletEditor from '../components/BulletEditor.jsx';
 
 const CORE_FIELDS = [
   { key: 'communication_dna',    label: 'Communication Style',   options: ['direct_blunt','detail_oriented','emotional_expressive','reserved_quiet','collaborative'] },
@@ -55,6 +56,14 @@ export default function ProfileEditor() {
 
   const setCoreField = (key, val) => setDraft(d => ({ ...d, core_fields: { ...d.core_fields, [key]: val } }));
 
+  function parseBullets(val) {
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string' && val.startsWith('[')) {
+      try { return JSON.parse(val); } catch { /* fall through */ }
+    }
+    return val ? [val] : [];
+  }
+
   if (loading) return <div className="p-8 text-gray-500 text-sm">Loading...</div>;
 
   return (
@@ -71,13 +80,13 @@ export default function ProfileEditor() {
       </nav>
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
         {signal && <SignalBadge signal={signal} />}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">New Agent Brief <span className="text-gray-400">(300 chars)</span></label>
-          <textarea rows={3} maxLength={300}
-            className="w-full border border-yellow-300 bg-yellow-50 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            value={draft.new_agent_brief || ''}
-            onChange={e => setDraft(d => ({ ...d, new_agent_brief: e.target.value }))}
-            placeholder="Brief a first-time agent on this customer in 2-3 sentences..." />
+        <div className="border border-yellow-300 bg-yellow-50 rounded p-4">
+          <p className="text-sm font-medium text-gray-700 mb-2">New Agent Brief</p>
+          <BulletEditor
+            value={parseBullets(draft.new_agent_brief)}
+            onChange={val => setDraft(d => ({ ...d, new_agent_brief: JSON.stringify(val) }))}
+            placeholder="Add a key point for first-time agents... (Enter to add)"
+          />
         </div>
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h2 className="font-semibold text-gray-900 mb-4">Core Behavioral Fields</h2>
@@ -108,16 +117,20 @@ export default function ProfileEditor() {
           <IndustryFields values={draft.industry_fields || {}} onChange={v => setDraft(d => ({ ...d, industry_fields: v }))} />
         )}
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="font-semibold text-gray-900 mb-3">Notes</h2>
-          <div className="space-y-3">
-            {[['What has worked (500 chars)', 'what_has_worked'], ['What to avoid (500 chars)', 'what_to_avoid']].map(([label, key]) => (
-              <div key={key}>
-                <label className="text-sm text-gray-600 block mb-1">{label}</label>
-                <textarea rows={2} maxLength={500} className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                  value={draft.core_fields?.[key] || ''}
-                  onChange={e => setCoreField(key, e.target.value)} />
-              </div>
-            ))}
+          <h2 className="font-semibold text-gray-900 mb-4">Notes</h2>
+          <div className="space-y-5">
+            <BulletEditor
+              label="What has worked"
+              value={parseBullets(draft.core_fields?.what_has_worked)}
+              onChange={val => setCoreField('what_has_worked', val)}
+              placeholder="Add a tactic that works for this customer... (Enter to add)"
+            />
+            <BulletEditor
+              label="What to avoid"
+              value={parseBullets(draft.core_fields?.what_to_avoid)}
+              onChange={val => setCoreField('what_to_avoid', val)}
+              placeholder="Add something to avoid with this customer... (Enter to add)"
+            />
           </div>
         </div>
       </div>

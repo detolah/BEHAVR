@@ -2,6 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getHistory } from '../api/profiles.js';
 
+function HistoryValue({ label, value, className }) {
+  if (!value || value === 'null') return null;
+  let parsed = value;
+  try { parsed = JSON.parse(value); } catch { /* plain string */ }
+  if (Array.isArray(parsed)) {
+    return (
+      <div className={className}>
+        <span className="text-gray-400 not-italic">{label}: </span>
+        <ul className="list-disc list-inside mt-0.5 space-y-0.5">
+          {parsed.map((item, i) => <li key={i}>{item}</li>)}
+        </ul>
+      </div>
+    );
+  }
+  return (
+    <p className={className}>
+      <span className="text-gray-400 not-italic">{label}:</span> {parsed || '—'}
+    </p>
+  );
+}
+
 export default function History() {
   const { customerId } = useParams();
   const [history, setHistory] = useState([]);
@@ -26,11 +47,10 @@ export default function History() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="font-medium text-sm text-gray-900">{e.field_name.replace(/[._]/g, ' ')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      <span className="line-through text-red-400">{e.old_value || '—'}</span>
-                      {' → '}
-                      <span className="text-green-600">{e.new_value || '—'}</span>
-                    </p>
+                    <div className="text-xs text-gray-500 mt-1 space-y-0.5">
+                      <HistoryValue label="was" value={e.old_value} className="line-through text-red-400" />
+                      <HistoryValue label="now" value={e.new_value} className="text-green-600" />
+                    </div>
                   </div>
                   <div className="text-right text-xs text-gray-400">
                     <p>{new Date(e.changed_at).toLocaleDateString()}</p>
