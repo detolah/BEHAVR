@@ -1,0 +1,7 @@
+{
+  "app": {
+    "name": "BEHAVR",
+    "short_description": "Behavioral intelligence for support agents.",
+    "long_description": "BEHAVR surfaces behavioral profiles for every customer so agents can personalise every interaction."
+  }
+}

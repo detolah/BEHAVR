@@ -1,15 +1,30 @@
 {
   "name": "BEHAVR",
-  "author": { "name": "BEHAVR", "email": "support@behavr.io" },
+  "author": {
+    "name": "BEHAVR",
+    "email": "support@behavr.io"
+  },
   "version": "1.0.0",
   "frameworkVersion": "2.0",
   "location": {
     "support": {
-      "ticket_sidebar": { "url": "assets/index.html" }
+      "ticket_sidebar": {
+        "url": "assets/index.html"
+      }
     }
   },
   "parameters": [
-    { "name": "api_key", "type": "text", "secure": true, "required": true },
-    { "name": "api_base_url", "type": "text", "required": true }
-  ]
+    {
+      "name": "api_key",
+      "type": "text",
+      "secure": true,
+      "required": true
+    },
+    {
+      "name": "api_base_url",
+      "type": "text",
+      "required": true
+    }
+  ],
+  "defaultLocale": "en"
 }
