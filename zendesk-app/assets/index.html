@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BEHAVR</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+    <div id="error" class="state-hidden"></div>
+    <div id="new-customer" class="state-hidden">
+      <div class="new-badge">New Customer — No Profile Yet</div>
+      <p class="hint">Add the first observation after this ticket resolves.</p>
+    </div>
+    <div id="profile-card" class="state-hidden"></div>
+    <div id="post-ticket-nudge" class="state-hidden">
+      <div class="nudge-card">
+        <p class="nudge-title">Quick observation before you close</p>
+        <select id="nudge-baseline">
+          <option value="">— Select emotional baseline —</option>
+          <option value="calm_rational">Calm / Rational</option>
+          <option value="anxious">Anxious</option>
+          <option value="frustrated_default">Frustrated</option>
+          <option value="already_escalated">Already Escalated</option>
+          <option value="apologetic">Apologetic</option>
+        </select>
+        <button id="nudge-submit">Save Observation</button>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
