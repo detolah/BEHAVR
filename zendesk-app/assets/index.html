@@ -15,8 +15,21 @@
     </div>
     <div id="error" class="state-hidden"></div>
     <div id="new-customer" class="state-hidden">
-      <div class="new-badge">New Customer — No Profile Yet</div>
-      <p class="hint">Add the first observation after this ticket resolves.</p>
+      <div class="new-badge">New Customer</div>
+      <p class="hint">No profile yet. Record your first observation now or build the full profile in the dashboard.</p>
+      <div class="nudge-card" style="margin-top:12px">
+        <p class="nudge-title">How is this customer coming across?</p>
+        <select id="new-baseline">
+          <option value="">— Emotional baseline —</option>
+          <option value="calm_rational">Calm / Rational</option>
+          <option value="anxious">Anxious</option>
+          <option value="frustrated_default">Frustrated</option>
+          <option value="already_escalated">Already Escalated</option>
+          <option value="apologetic">Apologetic</option>
+        </select>
+        <button id="new-submit">Save First Observation</button>
+      </div>
+      <a id="dashboard-link" href="#" target="_blank" class="dashboard-link">Open full profile editor →</a>
     </div>
     <div id="profile-card" class="state-hidden"></div>
     <div id="post-ticket-nudge" class="state-hidden">

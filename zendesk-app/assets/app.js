@@ -109,6 +109,8 @@
       currentCustomerId = data.customer.id;
 
       if (data.isNew || !data.profile.core_fields) {
+        const link = document.getElementById('dashboard-link');
+        if (link) link.href = `https://behavr.vercel.app/customers/${currentCustomerId}/profile`;
         show('new-customer');
         return;
       }
@@ -152,6 +154,17 @@
     try {
       await api('PATCH', `/api/profiles/${currentCustomerId}`, { core_fields: { emotional_baseline: val } });
       document.getElementById('post-ticket-nudge').className = 'state-hidden';
+    } catch { /* non-critical */ }
+  });
+
+  document.getElementById('new-submit').addEventListener('click', async () => {
+    const val = document.getElementById('new-baseline').value;
+    if (!val || !currentCustomerId) return;
+    try {
+      await api('PATCH', `/api/profiles/${currentCustomerId}`, { core_fields: { emotional_baseline: val } });
+      document.getElementById('new-customer').className = 'state-hidden';
+      show('profile-card');
+      document.getElementById('profile-card').innerHTML = '<p class="hint" style="padding:16px">First observation saved. Open the dashboard to build the full profile.</p>';
     } catch { /* non-critical */ }
   });
 
