@@ -6,6 +6,7 @@ import Onboarding from './pages/Onboarding.jsx';
 import CustomerList from './pages/CustomerList.jsx';
 import ProfileEditor from './pages/ProfileEditor.jsx';
 import History from './pages/History.jsx';
+import Import from './pages/Import.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/" element={<ProtectedRoute><CustomerList /></ProtectedRoute>} />
           <Route path="/customers/:customerId/profile" element={<ProtectedRoute><ProfileEditor /></ProtectedRoute>} />
           <Route path="/customers/:customerId/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+        <Route path="/import" element={<ProtectedRoute><Import /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
