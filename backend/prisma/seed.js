@@ -1,5 +1,4 @@
 require('dotenv').config();
-const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
@@ -122,12 +121,14 @@ const DEMO_CUSTOMERS = [
   },
 ];
 
+const DEMO_API_KEY = 'demo0000000000000000000000000000000000000000000000000000000000000000';
+
 async function main() {
-  const api_key = crypto.randomBytes(32).toString('hex');
+  const api_key = DEMO_API_KEY;
   const company = await prisma.company.upsert({
     where: { api_key },
     create: { name: 'Demo SaaS Co', industry: 'saas', zendesk_subdomain: 'demo', api_key },
-    update: {},
+    update: { name: 'Demo SaaS Co' },
   });
   const password = await bcrypt.hash('demo123', 10);
   await prisma.user.upsert({
