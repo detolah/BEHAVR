@@ -59,3 +59,39 @@ describe('getPlaybook — unit', () => {
     });
   });
 });
+
+const request = require('supertest');
+const createApp = require('../src/app');
+const { createTestCompany, createTestUser, createTestCustomer, makeJwt, cleanup } = require('./helpers');
+
+const app2 = createApp();
+let company2, user2, customer2;
+
+beforeAll(async () => {
+  company2  = await createTestCompany({ name: 'Playbook Co', api_key: 'pb-key-test-001' });
+  user2     = await createTestUser(company2.id);
+  customer2 = await createTestCustomer(company2.id, { email: 'pb@test.com' });
+});
+afterAll(async () => { await cleanup(company2.id); });
+
+describe('GET /api/playbook/:customerId', () => {
+  test('returns playbook for valid customer', async () => {
+    const token = makeJwt(user2, company2);
+    const res = await request(app2)
+      .get(`/api/playbook/${customer2.id}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('id');
+    expect(res.body).toHaveProperty('title');
+    expect(res.body).toHaveProperty('action');
+    expect(res.body).toHaveProperty('urgency');
+  });
+
+  test('returns 404 for nonexistent customer', async () => {
+    const token = makeJwt(user2, company2);
+    const res = await request(app2)
+      .get('/api/playbook/nonexistent-xyz')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(404);
+  });
+});
