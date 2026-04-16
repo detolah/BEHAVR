@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/server.js",
   "scripts": {
-    "start": "prisma migrate deploy && node src/server.js",
+    "start": "npx prisma migrate deploy && node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "jest --runInBand",
     "test:watch": "jest --watch --runInBand",
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.14.0",
+    "prisma": "^5.14.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
@@ -23,7 +24,6 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
-    "prisma": "^5.14.0",
     "supertest": "^7.0.0"
   }
 }
