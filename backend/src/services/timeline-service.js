@@ -10,12 +10,12 @@ async function getTimeline(customer_id, company_id) {
   if (!customer) return null;
 
   const [profile, signal, churnScore] = await Promise.all([
-    prisma.profile.findFirst({
-      where:   { customer_id, company_id },
+    prisma.profile.findUnique({
+      where:   { customer_id_company_id: { customer_id, company_id } },
       include: { history: { orderBy: { changed_at: 'asc' } } },
     }),
-    prisma.signal.findFirst({ where: { customer_id, company_id } }),
-    prisma.churnScore.findFirst({ where: { customer_id, company_id } }),
+    prisma.signal.findUnique({ where: { customer_id_company_id: { customer_id, company_id } } }),
+    prisma.churnScore.findUnique({ where: { customer_id_company_id: { customer_id, company_id } } }),
   ]);
 
   const events = [];
@@ -32,7 +32,7 @@ async function getTimeline(customer_id, company_id) {
       events.push({
         type:        'profile_update',
         timestamp:   h.changed_at,
-        description: `${formatFieldName(h.field_name)}: "${h.old_value || '—'}" → "${h.new_value}"`,
+        description: `${formatFieldName(h.field_name)}: "${h.old_value ?? '—'}" → "${h.new_value ?? '—'}"`,
         actor:       h.changed_by,
       });
     }
