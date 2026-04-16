@@ -50,6 +50,7 @@ function makeJwt(user, company) {
 async function cleanup(company_id) {
   await prisma.profileHistory.deleteMany({ where: { profile: { company_id } } });
   await prisma.profile.deleteMany({ where: { company_id } });
+  await prisma.churnScore.deleteMany({ where: { company_id } });
   await prisma.signal.deleteMany({ where: { company_id } });
   await prisma.customer.deleteMany({ where: { company_id } });
   await prisma.user.deleteMany({ where: { company_id } });
