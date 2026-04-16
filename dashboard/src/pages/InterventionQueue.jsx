@@ -21,10 +21,12 @@ export default function InterventionQueue() {
   const [interventions, setInterventions] = useState([]);
   const [total, setTotal]     = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(null);
 
   useEffect(() => {
     getInterventions()
       .then(r => { setInterventions(r.data.interventions); setTotal(r.data.total); })
+      .catch(() => setError('Failed to load interventions. Please refresh.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -39,6 +41,8 @@ export default function InterventionQueue() {
         <h1 className="text-xl font-bold text-gray-900 mb-6">Customers at Risk</h1>
         {loading ? (
           <p className="text-gray-500 text-sm">Loading...</p>
+        ) : error ? (
+          <p className="text-red-500 text-sm">{error}</p>
         ) : interventions.length === 0 ? (
           <p className="text-gray-500 text-sm">No customers above risk threshold.</p>
         ) : (
@@ -70,12 +74,14 @@ export default function InterventionQueue() {
                       )}
                     </div>
                   </div>
-                  <div className="text-right shrink-0 max-w-[220px]">
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${URGENCY_COLORS[item.playbook.urgency]}`}>
-                      {item.playbook.title}
-                    </span>
-                    <p className="text-xs text-gray-500 mt-2">{item.playbook.action}</p>
-                  </div>
+                  {item.playbook && (
+                    <div className="text-right shrink-0 max-w-[220px]">
+                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${URGENCY_COLORS[item.playbook.urgency] ?? URGENCY_COLORS.none}`}>
+                        {item.playbook.title}
+                      </span>
+                      <p className="text-xs text-gray-500 mt-2">{item.playbook.action}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
