@@ -76,6 +76,18 @@
     </div></div>`;
   }
 
+  function renderChurnBadge(churnData) {
+    if (!churnData || churnData.score == null) return '';
+    const score = Math.round(churnData.score);
+    let cls = 'churn-badge-low', label = 'Low Risk';
+    if (score >= 60)      { cls = 'churn-badge-high';   label = 'High Risk'; }
+    else if (score >= 30) { cls = 'churn-badge-medium'; label = 'Medium Risk'; }
+    return `<div class="churn-badge ${cls}">
+      <span class="churn-badge-label">${label}</span>
+      <span class="churn-badge-score">${score}</span>
+    </div>`;
+  }
+
   function parseBullets(val) {
     if (Array.isArray(val)) return val;
     if (typeof val === 'string') {
@@ -117,7 +129,7 @@
     </div>`;
   }
 
-  function renderProfile(profile, signal) {
+  function renderProfile(profile, signal, churnData) {
     const core = profile.core_fields;
     const ind  = profile.industry_fields;
     currentCore = core ? { ...core } : {};
@@ -131,6 +143,7 @@
       : '';
 
     document.getElementById('profile-card').innerHTML = `<div class="profile-card">
+      ${renderChurnBadge(churnData)}
       ${briefHtml}
       <div class="section"><div class="section-title">Behavioral Profile</div>${renderCore(core)}</div>
       ${core && core.sensitivity_flags && core.sensitivity_flags.length ? `<div class="section"><div class="section-title">Sensitivity Flags</div>${renderFlags(core.sensitivity_flags)}</div>` : ''}
@@ -221,11 +234,12 @@
         show('new-customer');
         return;
       }
-      const [profile, customerData] = await Promise.all([
+      const [profile, customerData, churnData] = await Promise.all([
         api('GET', `/api/profiles/${currentCustomerId}`),
         api('GET', `/api/customers/${encodeURIComponent(email)}`),
+        api('GET', `/api/churn/${currentCustomerId}`).catch(() => null),
       ]);
-      renderProfile(profile, customerData.signal);
+      renderProfile(profile, customerData.signal, churnData);
     } catch {
       showError('Could not load profile. Check API key and server connection.');
     }
