@@ -71,7 +71,8 @@ export default function ProfileEditor() {
       <nav className="bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center">
         <Link to="/" className="text-blue-600 text-sm hover:underline">← Customers</Link>
         <div className="flex items-center gap-3">
-          <Link to={`/customers/${customerId}/history`} className="text-sm text-gray-500 hover:underline">History</Link>
+          <Link to={`/customers/${customerId}/history`}  className="text-sm text-gray-500 hover:underline">History</Link>
+          <Link to={`/customers/${customerId}/timeline`} className="text-sm text-gray-500 hover:underline">Timeline</Link>
           <button onClick={save} disabled={saving}
             className="bg-blue-600 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-700 disabled:opacity-50">
             {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Profile'}
