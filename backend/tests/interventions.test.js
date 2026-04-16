@@ -31,6 +31,11 @@ describe('GET /api/interventions', () => {
     expect(item).toHaveProperty('customer');
     expect(item).toHaveProperty('score');
     expect(item).toHaveProperty('playbook');
+    expect(item).toHaveProperty('scored_at');
+    expect(item).toHaveProperty('factors');
+    expect(item).toHaveProperty('trust_level');
+    expect(item).toHaveProperty('escalation_pattern');
+    expect(res.body.total).toBe(1);
     expect(item.score).toBeGreaterThan(30);
   });
 
