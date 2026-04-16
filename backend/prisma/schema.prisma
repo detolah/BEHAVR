@@ -24,10 +24,11 @@ model Company {
   api_key           String    @unique
   created_at        DateTime  @default(now())
 
-  users     User[]
-  customers Customer[]
-  profiles  Profile[]
-  signals   Signal[]
+  users        User[]
+  customers    Customer[]
+  profiles     Profile[]
+  signals      Signal[]
+  churnScores  ChurnScore[]
 }
 
 model User {
@@ -52,9 +53,10 @@ model Customer {
   name        String?
   created_at  DateTime @default(now())
 
-  company  Company   @relation(fields: [company_id], references: [id])
-  profiles Profile[]
-  signals  Signal[]
+  company     Company      @relation(fields: [company_id], references: [id])
+  profiles    Profile[]
+  signals     Signal[]
+  churnScores ChurnScore[]
 
   @@unique([company_id, email])
   @@index([company_id, external_id])
@@ -71,8 +73,8 @@ model Profile {
   last_updated_by String?
   updated_at      DateTime @updatedAt
 
-  customer Customer        @relation(fields: [customer_id], references: [id])
-  company  Company         @relation(fields: [company_id], references: [id])
+  customer Customer         @relation(fields: [customer_id], references: [id])
+  company  Company          @relation(fields: [company_id], references: [id])
   history  ProfileHistory[]
 
   @@unique([customer_id, company_id])
@@ -108,4 +110,19 @@ model Signal {
 
   @@unique([customer_id, company_id])
   @@index([company_id])
+}
+
+model ChurnScore {
+  id          String   @id @default(cuid())
+  customer_id String
+  company_id  String
+  score       Float    @default(0)
+  factors     Json?
+  scored_at   DateTime @default(now())
+
+  customer Customer @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  company  Company  @relation(fields: [company_id], references: [id], onDelete: Cascade)
+
+  @@unique([customer_id, company_id])
+  @@index([company_id, score])
 }
