@@ -7,12 +7,19 @@ const prisma = require('../lib/prisma');
 
 const router = express.Router();
 
+const DEFAULT_MIN_SCORE = 30; // surface customers above this risk floor
+
 router.get('/', requireJwt, attachCompany, async (req, res, next) => {
-  const limit    = Math.min(parseInt(req.query.limit)     || 50,  100);
-  const offset   = parseInt(req.query.offset)  || 0;
-  const minScore = parseFloat(req.query.min_score) || 30;
+  const rawLimit  = parseInt(req.query.limit, 10);
+  const rawOffset = parseInt(req.query.offset, 10);
+  const rawMin    = parseFloat(req.query.min_score);
+
+  const limit    = Math.min(!isNaN(rawLimit)  ? rawLimit  : 50, 100);
+  const offset   = !isNaN(rawOffset) ? rawOffset : 0;
+  const minScore = !isNaN(rawMin)    ? rawMin    : DEFAULT_MIN_SCORE;
 
   try {
+    // $transaction ensures findMany count is consistent (prevents race between the two reads)
     const [scores, total] = await prisma.$transaction([
       prisma.churnScore.findMany({
         where:   { company_id: req.company.id, score: { gte: minScore } },

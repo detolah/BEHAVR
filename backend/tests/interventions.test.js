@@ -59,4 +59,21 @@ describe('GET /api/interventions', () => {
     const res = await request(app).get('/api/interventions');
     expect(res.status).toBe(401);
   });
+
+  test('does not return scores from another tenant', async () => {
+    const other = await createTestCompany({ name: 'Other Co', api_key: 'iv-other-001' });
+    const otherCust = await createTestCustomer(other.id, { email: 'x@other.com' });
+    await prisma.churnScore.create({
+      data: { customer_id: otherCust.id, company_id: other.id, score: 90, factors: {} },
+    });
+    const token = makeJwt(user, company);
+    const res = await request(app)
+      .get('/api/interventions')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.body.interventions.every(i => i.customer.id !== otherCust.id)).toBe(true);
+    await prisma.churnScore.deleteMany({ where: { company_id: other.id } });
+    await prisma.customer.deleteMany({ where: { company_id: other.id } });
+    await prisma.user.deleteMany({ where: { company_id: other.id } });
+    await prisma.company.delete({ where: { id: other.id } });
+  });
 });
