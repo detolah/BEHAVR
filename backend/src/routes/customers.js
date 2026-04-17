@@ -83,7 +83,7 @@ router.get('/list', requireAuth, attachCompany, async (req, res, next) => {
       include: {
         profiles:    { where: { company_id: req.company.id }, select: { id: true, core_fields: true, updated_at: true } },
         signals:     { where: { company_id: req.company.id } },
-        churnScores: { where: { company_id: req.company.id }, select: { score: true, risk_level: true, scored_at: true } },
+        churnScores: { where: { company_id: req.company.id }, select: { score: true, scored_at: true } },
       },
       orderBy: { created_at: 'desc' },
     });
@@ -91,7 +91,10 @@ router.get('/list', requireAuth, attachCompany, async (req, res, next) => {
       ...c,
       profile:    c.profiles[0]    || null,
       signal:     c.signals[0]     || null,
-      churnScore: c.churnScores[0] || null,
+      churnScore: c.churnScores[0] ? {
+        ...c.churnScores[0],
+        risk_level: c.churnScores[0].score >= 60 ? 'high' : c.churnScores[0].score >= 30 ? 'medium' : 'low',
+      } : null,
       profiles:    undefined,
       signals:     undefined,
       churnScores: undefined,
