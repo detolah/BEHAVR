@@ -23,8 +23,8 @@ router.get('/', requireJwt, attachCompany, async (req, res, next) => {
     let totalScore = 0;
     for (const s of scores) {
       totalScore += s.score;
-      if (s.score < 30)      distribution.low++;
-      else if (s.score < 60) distribution.medium++;
+      if (s.score < 55)      distribution.low++;
+      else if (s.score < 70) distribution.medium++;
       else                   distribution.high++;
     }
     const avg_churn_score = scores.length

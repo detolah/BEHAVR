@@ -51,15 +51,15 @@ export default function CohortAnalysis() {
           </div>
           <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
             <p className="text-2xl font-bold text-red-600">{data.churn_distribution.high}</p>
-            <p className="text-xs text-gray-500 mt-1">High Risk (60+)</p>
+            <p className="text-xs text-gray-500 mt-1">High Risk (70+)</p>
           </div>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-lg p-5 mb-4">
           <h2 className="text-sm font-semibold text-gray-700 mb-4">Churn Risk Distribution</h2>
-          <Bar label="Low (0–29)"     value={data.churn_distribution.low}    max={data.total_customers} colorClass="bg-green-500" />
-          <Bar label="Medium (30–59)" value={data.churn_distribution.medium} max={data.total_customers} colorClass="bg-yellow-500" />
-          <Bar label="High (60–100)"  value={data.churn_distribution.high}   max={data.total_customers} colorClass="bg-red-500" />
+          <Bar label="Low (0–54)"     value={data.churn_distribution.low}    max={data.total_customers} colorClass="bg-green-500" />
+          <Bar label="Medium (55–69)" value={data.churn_distribution.medium} max={data.total_customers} colorClass="bg-yellow-500" />
+          <Bar label="High (70–100)"  value={data.churn_distribution.high}   max={data.total_customers} colorClass="bg-red-500" />
         </div>
 
         <div className="bg-white border border-gray-200 rounded-lg p-5 mb-4">
