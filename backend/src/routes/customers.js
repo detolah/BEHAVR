@@ -81,17 +81,20 @@ router.get('/list', requireAuth, attachCompany, async (req, res, next) => {
     const customers = await prisma.customer.findMany({
       where: { company_id: req.company.id },
       include: {
-        profiles: { where: { company_id: req.company.id }, select: { id: true, core_fields: true, updated_at: true } },
-        signals: { where: { company_id: req.company.id } },
+        profiles:    { where: { company_id: req.company.id }, select: { id: true, core_fields: true, updated_at: true } },
+        signals:     { where: { company_id: req.company.id } },
+        churnScores: { where: { company_id: req.company.id }, select: { score: true, risk_level: true, scored_at: true } },
       },
       orderBy: { created_at: 'desc' },
     });
     res.json(customers.map(c => ({
       ...c,
-      profile: c.profiles[0] || null,
-      signal: c.signals[0] || null,
-      profiles: undefined,
-      signals: undefined,
+      profile:    c.profiles[0]    || null,
+      signal:     c.signals[0]     || null,
+      churnScore: c.churnScores[0] || null,
+      profiles:    undefined,
+      signals:     undefined,
+      churnScores: undefined,
     })));
   } catch (err) { next(err); }
 });

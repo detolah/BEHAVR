@@ -53,6 +53,15 @@ export default function CustomerList() {
                     <p className="text-xs text-gray-500">{c.email}</p>
                   </div>
                   <div className="flex items-center gap-3">
+                    {c.churnScore && (
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded ${
+                        c.churnScore.risk_level === 'high'   ? 'bg-red-100 text-red-700' :
+                        c.churnScore.risk_level === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-green-100 text-green-700'
+                      }`}>
+                        {c.churnScore.risk_level} · {c.churnScore.score}
+                      </span>
+                    )}
                     <div className="text-right">
                       <p className="text-xs text-gray-500 mb-1">Profile {p}%</p>
                       <div className="w-24 h-1.5 bg-gray-200 rounded-full">
