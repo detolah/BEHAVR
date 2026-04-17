@@ -93,7 +93,7 @@ router.get('/list', requireAuth, attachCompany, async (req, res, next) => {
       signal:     c.signals[0]     || null,
       churnScore: c.churnScores[0] ? {
         ...c.churnScores[0],
-        risk_level: c.churnScores[0].score >= 60 ? 'high' : c.churnScores[0].score >= 30 ? 'medium' : 'low',
+        risk_level: c.churnScores[0].score >= 70 ? 'high' : c.churnScores[0].score >= 55 ? 'medium' : 'low',
       } : null,
       profiles:    undefined,
       signals:     undefined,
